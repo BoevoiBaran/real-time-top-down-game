@@ -1,0 +1,23 @@
+[Rr]elease/
+[Dd]ebug/
+[Oo]bj/
+[Bb]in/
+packages/
+.vs
+*.vspx
+launchSettings.json
+*.retry
+ansible.cfg
+.leveldb
+.storage 
+*.log
+!*.sln
+!*.csproj
+
+#region | team-shared run configurations for Rider |
+!.idea/
+.idea/.idea.Cluster/*
+!.idea/.idea.Cluster/.idea
+.idea/.idea.Cluster/.idea/*
+!.idea/.idea.Cluster/.idea/runConfigurations
+#endregion

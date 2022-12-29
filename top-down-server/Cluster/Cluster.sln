@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\ApiGateway.csproj", "{25A8261D-2123-4F0B-A30A-426C5F4C528E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "..\..\shared-data\Shared\Shared.csproj", "{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25A8261D-2123-4F0B-A30A-426C5F4C528E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25A8261D-2123-4F0B-A30A-426C5F4C528E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25A8261D-2123-4F0B-A30A-426C5F4C528E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25A8261D-2123-4F0B-A30A-426C5F4C528E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
