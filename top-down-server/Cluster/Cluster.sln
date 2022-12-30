@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "ApiGateway\Ap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "..\..\shared-data\Shared\Shared.csproj", "{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameRoomsService", "GameRoomsService\GameRoomsService.csproj", "{36BCABB8-AC94-47F4-B638-BAD955653E89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D0DFC88-2B8F-4D8B-A190-BA410986FB79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36BCABB8-AC94-47F4-B638-BAD955653E89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BCABB8-AC94-47F4-B638-BAD955653E89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36BCABB8-AC94-47F4-B638-BAD955653E89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36BCABB8-AC94-47F4-B638-BAD955653E89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
