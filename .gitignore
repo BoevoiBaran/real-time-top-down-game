@@ -153,12 +153,12 @@ CheatAvatarsConfig.json
 /.idea/*
 Assets/Core/.vscode/settings.json
 
-/Assets/Shared
-/Assets/Shared/*
-/Assets/Shared.meta
+top-down-client/Assets/Shared
+top-down-client/Assets/Shared/*
+top-down-client/Assets/Shared.meta
 
-Shared/bin
-Shared/obj
+shared-data/Shared/bin
+shared-data/Shared/obj
 
 /Assets/References/.vscode/settings.json
 *.pyc
@@ -167,23 +167,20 @@ Shared/obj
 server/AutomatizationTools/*.rdb
 server/*.rdb
 
-!/Shared/Shared.csproj
+!shared-data/Shared/Shared.csproj
 Assets/Utils/LocationEditor/StatisticsReport.txt
 Assets/Utils/LocationEditor/StatisticsReport.txt.meta
 
 # Memory profiler
 MemoryCaptures/ 
-server/PiratesAdminPanel/AdminPanel/wwwroot/References/*.json
 
 # Unity Logs
 /Logs/*
 /UserSettings/*
 
 # Protobuf Serializer TypeModel
-/Assets/Core/SharedTypeModel.dll
-/Assets/Core/SharedTypeModel.dll.meta
-/Assets/Core/ChatTypeModel.dll
-/Assets/Core/ChatTypeModel.dll.meta
+top-down-client/Assets/Core/SharedTypeModel.dll
+top-down-client/Assets/Core/SharedTypeModel.dll.meta
 ProjectSettings/Packages/com.unity.probuilder/Settings.json
 
 # RiderScriptEditorPersistedState
