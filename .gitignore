@@ -175,8 +175,8 @@ Assets/Utils/LocationEditor/StatisticsReport.txt.meta
 MemoryCaptures/ 
 
 # Unity Logs
-/Logs/*
-/UserSettings/*
+top-down-client/Logs/*
+top-down-client/UserSettings/*
 
 # Protobuf Serializer TypeModel
 top-down-client/Assets/Core/SharedTypeModel.dll
