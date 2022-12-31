@@ -12,4 +12,14 @@ namespace Telepathy
         public static Action<string> Warning = Console.WriteLine;
         public static Action<string> Error = Console.Error.WriteLine;
     }
+    
+    public interface ILog
+    {
+        void LogInfo(string message);
+        void LogInfo(string message, int connectionId);
+        void LogWarning(string message);
+        void LogWarning(string message, int connectionId);
+        void LogError(string message);
+        void LogError(string message, int connectionId);
+    }
 }

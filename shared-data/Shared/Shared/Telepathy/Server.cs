@@ -71,7 +71,7 @@ namespace Telepathy
         public bool Active => listenerThread != null && listenerThread.IsAlive;
 
         // constructor
-        public Server(int MaxMessageSize) : base(MaxMessageSize) {}
+        public Server(int MaxMessageSize, ILog log) : base(MaxMessageSize, log) {}
 
         // the listener thread's listen function
         // note: no maxConnections parameter. high level API should handle that.
@@ -95,7 +95,7 @@ namespace Telepathy
                 //listener.Server.SendTimeout = SendTimeout;
                 //listener.Server.ReceiveTimeout = ReceiveTimeout;
                 listener.Start();
-                Log.Info("Server: listening port=" + port);
+                Log.LogInfo("Server: listening port=" + port);
 
                 // keep accepting new clients
                 while (true)
@@ -138,7 +138,7 @@ namespace Telepathy
                         }
                         catch (Exception exception)
                         {
-                            Log.Error("Server send thread exception: " + exception);
+                            Log.LogError("Server send thread exception: " + exception);
                         }
                     });
                     sendThread.IsBackground = true;
@@ -172,7 +172,7 @@ namespace Telepathy
                         }
                         catch (Exception exception)
                         {
-                            Log.Error("Server client thread exception: " + exception);
+                            Log.LogError("Server client thread exception: " + exception);
                         }
                     });
                     receiveThread.IsBackground = true;
@@ -183,18 +183,18 @@ namespace Telepathy
             {
                 // UnityEditor causes AbortException if thread is still
                 // running when we press Play again next time. that's okay.
-                Log.Info("Server thread aborted. That's okay. " + exception);
+                Log.LogInfo("Server thread aborted. That's okay. " + exception);
             }
             catch (SocketException exception)
             {
                 // calling StopServer will interrupt this thread with a
                 // 'SocketException: interrupted'. that's okay.
-                Log.Info("Server Thread stopped. That's okay. " + exception);
+                Log.LogInfo("Server Thread stopped. That's okay. " + exception);
             }
             catch (Exception exception)
             {
                 // something went wrong. probably important.
-                Log.Error("Server Exception: " + exception);
+                Log.LogInfo("Server Exception: " + exception);
             }
         }
 
@@ -215,7 +215,7 @@ namespace Telepathy
             // start the listener thread
             // (on low priority. if main thread is too busy then there is not
             //  much value in accepting even more clients)
-            Log.Info("Server: Start port=" + port);
+            Log.LogInfo("Server: Start port=" + port);
             listenerThread = new Thread(() => { Listen(port); });
             listenerThread.IsBackground = true;
             listenerThread.Priority = ThreadPriority.BelowNormal;
@@ -228,7 +228,7 @@ namespace Telepathy
             // only if started
             if (!Active) return;
 
-            Log.Info("Server: stopping...");
+            Log.LogInfo("Server: stopping...");
 
             // stop listening to connections so that no one can connect while we
             // close the client connections
@@ -295,7 +295,7 @@ namespace Telepathy
                     else
                     {
                         // log the reason
-                        Log.Warning($"Server.Send: sendPipe for connection {connectionId} reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting this connection for load balancing.");
+                        Log.LogWarning($"Server.Send: sendPipe for connection {connectionId} reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting this connection for load balancing.");
 
                         // just close it. send thread will take care of the rest.
                         connection.client.Close();
@@ -311,7 +311,7 @@ namespace Telepathy
                 //Logger.Log("Server.Send: invalid connectionId: " + connectionId);
                 return false;
             }
-            Log.Error("Server.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
+            Log.LogError("Server.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
             return false;
         }
 
@@ -334,7 +334,7 @@ namespace Telepathy
             {
                 // just close it. send thread will take care of the rest.
                 connection.client.Close();
-                Log.Info("Server.Disconnect connectionId:" + connectionId);
+                Log.LogInfo("Server.Disconnect connectionId:" + connectionId);
                 return true;
             }
             return false;
@@ -396,6 +396,12 @@ namespace Telepathy
 
             // return what's left to process for next time
             return receivePipe.TotalCount;
+        }
+        
+        public int GetSendPipeCount(int connectionId)
+        {
+            var result = clients.TryGetValue(connectionId, out var connection) ? connection.sendPipe.Count : 0;
+            return result;
         }
     }
 }

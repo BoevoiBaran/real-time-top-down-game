@@ -29,11 +29,14 @@ namespace Telepathy
         // => disabled by default because some people might use Telepathy
         //    without Mirror and without sending pings, so timeouts are likely
         public int ReceiveTimeout = 0;
+        
+        public readonly ILog Log;
 
         // constructor
-        protected Common(int MaxMessageSize)
+        protected Common(int MaxMessageSize, ILog log)
         {
             this.MaxMessageSize = MaxMessageSize;
+            Log = log;
         }
     }
 }

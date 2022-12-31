@@ -42,12 +42,15 @@ namespace Telepathy
         //    each time we connect
         //    (unlike server which has one receive pipe for all connections)
         public readonly MagnificentReceivePipe receivePipe;
+        
+        public readonly ILog Log;
 
         // constructor always creates new TcpClient for client connection!
-        public ClientConnectionState(int MaxMessageSize) : base(new TcpClient(), MaxMessageSize)
+        public ClientConnectionState(int MaxMessageSize, ILog log) : base(new TcpClient(), MaxMessageSize)
         {
             // create receive pipe with max message size for pooling
             receivePipe = new MagnificentReceivePipe(MaxMessageSize);
+            Log = log;
         }
 
         // dispose all the state safely
@@ -113,7 +116,7 @@ namespace Telepathy
         public int ReceivePipeCount => state != null ? state.receivePipe.TotalCount : 0;
 
         // constructor
-        public Client(int MaxMessageSize) : base(MaxMessageSize) {}
+        public Client(int MaxMessageSize, ILog log) : base(MaxMessageSize, log) {}
 
         // the thread function
         // STATIC to avoid sharing state!
@@ -121,7 +124,6 @@ namespace Telepathy
         // => avoids data races where an old dieing thread might still modify
         //    the current thread's state :/
         static void ReceiveThreadFunction(ClientConnectionState state, string ip, int port, int MaxMessageSize, bool NoDelay, int SendTimeout, int ReceiveTimeout, int ReceiveQueueLimit)
-
         {
             Thread sendThread = null;
 
@@ -153,7 +155,7 @@ namespace Telepathy
             {
                 // this happens if (for example) the ip address is correct
                 // but there is no server running on that ip/port
-                Log.Info("Client Recv: failed to connect to ip=" + ip + " port=" + port + " reason=" + exception);
+                state.Log.LogInfo("Client Recv: failed to connect to ip=" + ip + " port=" + port + " reason=" + exception);
             }
             catch (ThreadInterruptedException)
             {
@@ -171,7 +173,7 @@ namespace Telepathy
             catch (Exception exception)
             {
                 // something went wrong. probably important.
-                Log.Error("Client Recv Exception: " + exception);
+                state.Log.LogError("Client Recv Exception: " + exception);
             }
             // add 'Disconnected' event to receive pipe so that the caller
             // knows that the Connect failed. otherwise they will never know
@@ -200,14 +202,14 @@ namespace Telepathy
             // not if already started
             if (Connecting || Connected)
             {
-                Log.Warning("Telepathy Client can not create connection because an existing connection is connecting or connected");
+                Log.LogWarning("Telepathy Client can not create connection because an existing connection is connecting or connected");
                 return;
             }
 
             // overwrite old thread's state object. create a new one to avoid
             // data races where an old dieing thread might still modify the
             // current state! fixes all the flaky tests!
-            state = new ClientConnectionState(MaxMessageSize);
+            state = new ClientConnectionState(MaxMessageSize, Log);
 
             // We are connecting from now until Connect succeeds or fails
             state.Connecting = true;
@@ -287,17 +289,17 @@ namespace Telepathy
                     else
                     {
                         // log the reason
-                        Log.Warning($"Client.Send: sendPipe reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting to avoid ever growing memory & latency.");
+                        Log.LogWarning($"Client.Send: sendPipe reached limit of {SendQueueLimit}. This can happen if we call send faster than the network can process messages. Disconnecting to avoid ever growing memory & latency.");
 
                         // just close it. send thread will take care of the rest.
                         state.client.Close();
                         return false;
                     }
                 }
-                Log.Error("Client.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
+                Log.LogError("Client.Send: message too big: " + message.Count + ". Limit: " + MaxMessageSize);
                 return false;
             }
-            Log.Warning("Client.Send: not connected!");
+            Log.LogWarning("Client.Send: not connected!");
             return false;
         }
 
