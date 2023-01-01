@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using GameRoomsService.GameRoomServer;
+using GameRoomsService.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -18,8 +20,14 @@ namespace GameRoomsService
         
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<GameRoomsServerSettings>(Configuration.GetSection(GameRoomsServerSettings.SECTION));
+            
             services.AddControllers();
             services.AddHealthChecks();
+
+            services.AddSingleton<RoomsHolder>();
+            services.AddSingleton<GameRoomsServer>();
+            services.AddHostedService<GameRoomsManager>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

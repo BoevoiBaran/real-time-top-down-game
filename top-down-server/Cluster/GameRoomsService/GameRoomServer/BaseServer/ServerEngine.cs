@@ -15,13 +15,13 @@ namespace GameRoomsService.GameRoomServer
             public List<int> HangingClients;
         }
 
-        public virtual uint NetProtocolVersion { get; }
+        protected virtual uint NetProtocolVersion { get; }
 
-        public event Action<int, string> OnClientWasAuthenticated;
-        public event Action<int> OnClientWasDisconnected;
+        public event Action<int, string> OnClientWasAuthenticated = null!;
+        public event Action<int> OnClientWasDisconnected = null!;
 
-        protected readonly ConcurrentDictionary<int, string> _clientId2ProgressId;
-        protected readonly ConcurrentDictionary<string, int> _progressId2ClientId;
+        private readonly ConcurrentDictionary<int, string> _clientId2ProgressId;
+        private readonly ConcurrentDictionary<string, int> _progressId2ClientId;
 
         private readonly INetworkServer _server;
         private readonly IServerMessageProcessor _messageProcessor;
@@ -30,7 +30,7 @@ namespace GameRoomsService.GameRoomServer
 
         private readonly TimeSpan _statsHangingClient;
 
-        public ServerEngine(GameRoomsServerSettings gameRoomsSettings,
+        protected ServerEngine(GameRoomsServerSettings gameRoomsSettings,
             IProgressIdFetcher progressIdFetcher,
             IServerMessageProcessor messageProcessor,
             Telepathy.ILog log)
@@ -205,8 +205,8 @@ namespace GameRoomsService.GameRoomServer
 
         public void Release()
         {
-            OnClientWasAuthenticated = null;
-            OnClientWasDisconnected = null;
+            OnClientWasAuthenticated = null!;
+            OnClientWasDisconnected = null!;
         }
 
         /// <summary>

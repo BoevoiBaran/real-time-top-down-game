@@ -2,6 +2,8 @@ namespace GameRoomsService.GameRoomServer
 {
     public class GameRoomsServerSettings
     {
+        public const string SECTION = "GameRoomsServerSettings";
+        
         public int Port { get; set; }
 
         public int TickPeriod { get; set; }

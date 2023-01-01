@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GameRoomServer.Shared;
 using GameRoomsService.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Shared.Network;
 using Telepathy;
 
@@ -12,17 +13,17 @@ namespace GameRoomsService.GameRoomServer
 {
     public class GameRoomsServer : IServerMessageProcessor, ILog
     {
-        private const int SAFE_DISCONNECT_WAITING_PERIOD_IN_MS = 3000;
+        private const int SafeDisconnectWaitingPeriodInMs = 3000;
 
         private readonly ILogger<GameRoomsServer> _logger;
         private readonly GameRoomsServerSettings _roomsServerSettings;
         private GameRoomsNetworkServer _server;
-        private RoomsHolder _roomsHolder;
+        private readonly RoomsHolder _roomsHolder;
         private IGameRoomsServerListener _listener;
         
-        public GameRoomsServer(RoomsHolder roomsHolder, GameRoomsServerSettings settings, ILogger<GameRoomsServer> logger)
+        public GameRoomsServer(RoomsHolder roomsHolder, IOptions<GameRoomsServerSettings> settings, ILogger<GameRoomsServer> logger)
         {
-            _roomsServerSettings = settings;
+            _roomsServerSettings = settings.Value;
             _logger = logger;
             _roomsHolder = roomsHolder;
         }
@@ -36,6 +37,26 @@ namespace GameRoomsService.GameRoomServer
             _server.OnClientWasDisconnected += OnClientDisconnectedHandler;
 
             return Task.FromResult(true);
+        }
+        
+        public async Task Run(CancellationToken cancellationToken)
+        {
+            await _server.Run(cancellationToken);
+        }
+
+        public void SendMessageToPlayer(int connectionId)
+        {
+            _server.Send(connectionId, ArraySegment<byte>.Empty);
+        }
+
+        private bool SendingTimeoutExpired(long timeOut)
+        {
+            return timeOut >= SafeDisconnectWaitingPeriodInMs;
+        }
+
+        private void OnClientConnectedHandler(int connectionId, string clientId)
+        {
+            Task.Run(() => ProcessConnection(connectionId, clientId));
         }
 
         private async Task DisconnectClient(int connectionId)
@@ -54,21 +75,6 @@ namespace GameRoomsService.GameRoomServer
             }
             
             _server.DisconnectClient(connectionId);
-        }
-
-        private bool SendingTimeoutExpired(long timeOut)
-        {
-            return timeOut >= SAFE_DISCONNECT_WAITING_PERIOD_IN_MS;
-        }
-        
-        public async Task Run(CancellationToken cancellationToken)
-        {
-            await _server.Run(cancellationToken);
-        }
-        
-        private void OnClientConnectedHandler(int connectionId, string clientId)
-        {
-            Task.Run(() => ProcessConnection(connectionId, clientId));
         }
         
         private void OnClientDisconnectedHandler(int connectionId)
@@ -143,12 +149,7 @@ namespace GameRoomsService.GameRoomServer
             
             await Task.FromResult(true);
         }
-        
-        public void SendMessageToPlayer(int connectionId)
-        {
-            _server.Send(connectionId, ArraySegment<byte>.Empty);
-        }
-        
+
         private object? GetPlayerId(int connectionId)
         {
             throw new NotImplementedException();
